@@ -3,8 +3,6 @@ from psd_tools import PSDImage
 psd = PSDImage.open('test/smart_objects.psd')
 # psd.composite().save('video-parallel-banner_set.png')
 from modules.parse import getCSS
-import nested_config
-print(len(nested_config.scheme['.logo']['children']))
 
 def config():
     pairs = []
@@ -15,8 +13,8 @@ def config():
     return pairs
 
 def nested_config():
-    elements = {}
-    f = open('nested_config', 'r')
-
-
-print(getCSS(psd, config()))
+    from nested_config import scheme
+    return scheme
+# nested_config()
+print(getCSS(psd, nested_config()))
+# print(getCSS(psd, config()))
