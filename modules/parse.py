@@ -1,10 +1,11 @@
 from psd_tools import PSDImage
+from psd_tools.constants import Tag
 import os
 import re
 
 # TODO
 #
-# get font-size, border-radius for button
+# border-radius for button
 #
 # find out why converting to jpg eats the quality a lot
 # 
@@ -36,20 +37,17 @@ def getCSS(psd, config):
         css += ".b" + group.name + " {"
         name = group.name
         if(group.kind == 'smartobject'):
-            print("smartobject layer. opening...")
             group.smart_object.save('temp')
             group = PSDImage.open("temp")
         # process element
         for element in config:
-            print(element)
             match = findElement(element['name'], group)
             if (match):
+                # add to css
                 if (element.get('selector')):
-                    css += getElementCSS(match, element['selector'], group)
+                    css += getElementCSS(match, group, element)
+                # export
                 if(element.get('export')):
-                    print("has export value")
-                    print(element['export'])
-                    print(group)
                     filename = element['export'].get('name') if element['export'].get('name') else element['selector']
                     if (group.kind == 'smartobject'):
                         viewport = group.viewbox if element['export'].get('clip') else None
@@ -76,16 +74,36 @@ def findElement(psd_name, parent):
     else:
         return False
 
-def getElementCSS(element, selector, parent):
-
+def getElementCSS(element, parent, config):
+    selector = config.get('selector')     
     style = ""
     style += "\n" + selector + " {\n"\
     + f'left: {element.offset[0] - parent.offset[0]}px;\n'\
     + f'top: {element.offset[1] - parent.offset[1]}px;\n'\
     + f'width: {element.width}px;\n'\
-    + f'height: {element.height}px\n'\
-    + "}"
+    + f'height: {element.height}px\n'
+    # font-size, from this layer or from child layers, if "text" option set
+    font_size =""
+    if(config.get('text')):
+        if element.kind == 'type':
+            style += f'font-size: {getFontSize(element)}px\n'
+        else:
+            for child in element.descendants():
+                if child.kind == 'type':
+                    style += f'font-size: {getFontSize(child)}px\n'
+                    break
+    style += "}"
     return style
+
+def getFontSize(element):
+    runlength = element.engine_dict['StyleRun']['RunLengthArray']
+    rundata= element.engine_dict['StyleRun']['RunArray']
+    text = element.engine_dict['Editor']['Text'].value
+    for length, data in zip(runlength, rundata):
+        stylesheet = data['StyleSheet']['StyleSheetData']
+        font_size = str(round(stylesheet['FontSize'] * element.transform[0], 2))
+    return font_size
+
 
 def listMatches(artboard,name):
     matches = [];
