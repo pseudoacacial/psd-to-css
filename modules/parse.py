@@ -1,5 +1,6 @@
 from psd_tools import PSDImage
 import os
+import re
 
 # TODO
 #
@@ -50,7 +51,10 @@ def getCSS(psd, config):
                     print(element['export'])
                     print(group)
                     filename = element['export'].get('name') if element['export'].get('name') else element['selector']
-                    viewport = group.viewbox if element['export'].get('clip') else None
+                    if (group.kind == 'smartobject'):
+                        viewport = group.viewbox if element['export'].get('clip') else None
+                    else: 
+                        viewport = group.bbox if element['export'].get('clip') else None
                     # discard transparency if jpg
                     if (element['export']['extension'] == "jpg"):
                         image = match.composite(viewport).convert('RGB')
@@ -92,7 +96,8 @@ def find(artboard, name, result_list):
 
     try:
         for layer in artboard:
-            if layer.name == name:
+            match = re.search(name, layer.name)
+            if match:
                 result_list.append(layer)
             find(layer, name, result_list)
     except TypeError:
