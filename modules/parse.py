@@ -41,11 +41,15 @@ def getCSS(psd, config):
             group = PSDImage.open("temp")
         # process element
         for element in config:
+            #default values
+            if(element.get('position') == None):
+                element['position'] = True
             match = findElement(element['name'], group)
             if (match):
                 # add to css
                 if (element.get('selector')):
                     css += getElementCSS(match, group, element)
+
                 # export
                 if(element.get('export')):
                     filename = element['export'].get('name') if element['export'].get('name') else element['selector']
@@ -75,24 +79,29 @@ def findElement(psd_name, parent):
         return False
 
 def getElementCSS(element, parent, config):
-    selector = config.get('selector')     
+    selector = config.get('selector')
+    text = config.get('text')
+    position = config.get('position')
     style = ""
-    style += "\n" + selector + " {\n"\
-    + f'left: {element.offset[0] - parent.offset[0]}px;\n'\
-    + f'top: {element.offset[1] - parent.offset[1]}px;\n'\
-    + f'width: {element.width}px;\n'\
-    + f'height: {element.height}px\n'
-    # font-size, from this layer or from child layers, if "text" option set
-    font_size =""
-    if(config.get('text')):
-        if element.kind == 'type':
-            style += f'font-size: {getFontSize(element)}px\n'
-        else:
-            for child in element.descendants():
-                if child.kind == 'type':
-                    style += f'font-size: {getFontSize(child)}px\n'
-                    break
-    style += "}"
+    if(position or text):
+        if selector:
+            style += "\n" + selector + " {\n"
+            if position:
+                style += f'left: {element.offset[0] - parent.offset[0]}px;\n'\
+                + f'top: {element.offset[1] - parent.offset[1]}px;\n'\
+                + f'width: {element.width}px;\n'\
+                + f'height: {element.height}px;\n'
+            # font-size, from this layer or from child layers, if "text" option set
+            font_size =""
+            if(text):
+                if element.kind == 'type':
+                    style += f'font-size: {getFontSize(element)}px;\n'
+                else:
+                    for child in element.descendants():
+                        if child.kind == 'type':
+                            style += f'font-size: {getFontSize(child)}px;\n'
+                            break
+            style += "}"
     return style
 
 def getFontSize(element):
