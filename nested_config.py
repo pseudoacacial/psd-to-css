@@ -1,9 +1,14 @@
+psd_location = ''
 scheme = [
-    {'selector': '.img1', 'name': 'Gigas', 'children': {}, 'export': {'extension': 'png'}},
-    {'selector': '.img2', 'name': '10€', 'children': {}, 'export': {'extension': 'png'}},
-    {'selector':'.img3', 'name': '4GB+6GB', 'children': {}, 'export': {'extension': 'png'}},
-    {'selector':'.img4', 'name': '1 mes gratis', 'children': {}, 'export': {'extension': 'png'}},
-    {'selector':'.logo', 'name': 'woo-logo', 'children': {}},
-    {'selector':'.button', 'name': 'Rectangle 2', 'children': {}},
-    {'selector': False, 'name': 'BG', 'export': {'name': 'bg', 'extension': 'png', 'clip': True}}
+    {'selector': '.circle', 'name': 'shape_01'},
+    {'selector': '.logo', 'name': 'logo_white'},
+    {'selector': '.badge', 'name': 'img_badge'},
+    {'selector': '.blue', 'name': 'bg_badge', 'export': {'name': 'blue', 'extension': 'png', 'clip': False}},
+    {'selector': '.red', 'name': 'shape_logo', 'export': {'name': 'red', 'extension': 'png', 'clip': False}},
+    {'selector': '.shape-1', 'name': 'shape_02', 'export': {'name': 'shape', 'extension': 'png', 'clip': False}},
+    {'selector': '.shape-2', 'name': 'shape_03', 'export': {'name': 'shape2', 'extension': 'png', 'clip': False}},
+    {'selector': '.hero', 'name': 'img_main', 'export': {'name': 'hero', 'extension': 'png', 'clip': False}},
+    {'selector': '.button', 'name': 'cta', 'text': True},
+    {'selector': '.text-wrapper-1', 'name': 'Entretien Auto au meilleur prix', 'text': True},
+    {'selector': '.text-wrapper-2', 'name': 'chez nos 6000', 'text': True},
 ]

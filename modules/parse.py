@@ -5,6 +5,9 @@ import re
 
 # TODO
 #
+# allow a list of psd names for one selector - merge then and and give position
+# of merged
+#
 # border-radius for button
 #
 # find out why converting to jpg eats the quality a lot
@@ -62,8 +65,8 @@ def getCSS(psd, config):
                         image = match.composite(viewport).convert('RGB')
                     else:
                         image = match.composite(viewport)
-                    image.save(\
-                        filename.replace('.', '')\
+                    image.save('images/'\
+                        + filename.replace('.', '')\
                         + '_' + name\
                         + '.' + element['export']['extension']\
                         )
