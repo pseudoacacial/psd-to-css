@@ -47,7 +47,9 @@ def getCSS(psd, config):
             #default values
             if(element.get('position') == None):
                 element['position'] = True
-            match = findElement(element['name'], group)
+            if(element.get('match') == None):
+                element['match'] = 0
+            match = findElement(element['name'], group, element['match'])
             if (match):
                 # add to css
                 if (element.get('selector')):
@@ -62,22 +64,27 @@ def getCSS(psd, config):
                         viewport = group.bbox if element['export'].get('clip') else None
                     # discard transparency if jpg
                     if (element['export']['extension'] == "jpg"):
-                        image = match.composite(viewport).convert('RGB')
+                        image = match.composite(viewport, layer_filter= lambda x: True, color=(1.,1.,1.)).convert('RGB')
                     else:
-                        image = match.composite(viewport)
+                        image = match.composite(viewport, layer_filter= lambda x: True)
                     image.save('images/'\
                         + filename.replace('.', '')\
                         + '_' + name\
-                        + '.' + element['export']['extension']\
+                        + '.' + element['export']['extension'],\
+                        quality=100\
                         )
         if os.path.exists("temp"):
             os.remove("temp")
         css += "\n}\n\n"
     return css
 
-def findElement(psd_name, parent):
-    if listMatches(parent, psd_name):
-        return listMatches(parent, psd_name)[0]
+def findElement(psd_name, parent, match):
+    matches = listMatches(parent, psd_name)
+    if matches:
+        if(len(matches) > match):
+            return matches[match]
+        else:
+            return matches[0]
     else:
         return False
 
