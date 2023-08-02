@@ -5,7 +5,7 @@ import re
 
 # TODO
 #
-# allow a list of psd names for one selector - merge then and and give position
+# allow a list of psd names for one selector - merge and give position
 # of merged
 #
 # border-radius for button
@@ -88,7 +88,7 @@ def findElement(psd_name, parent, match):
     else:
         return False
 
-def getElementCSS(element, parent, config):
+def getElementCSS(element, frame, config):
     selector = config.get('selector')
     text = config.get('text')
     position = config.get('position')
@@ -97,8 +97,8 @@ def getElementCSS(element, parent, config):
         if selector:
             style += "\n" + selector + " {\n"
             if position:
-                style += f'left: {element.offset[0] - parent.offset[0]}px;\n'\
-                + f'top: {element.offset[1] - parent.offset[1]}px;\n'\
+                style += f'left: {element.offset[0] - frame.offset[0]}px;\n'\
+                + f'top: {element.offset[1] - frame.offset[1]}px;\n'\
                 + f'width: {element.width}px;\n'\
                 + f'height: {element.height}px;\n'
             # font-size, from this layer or from child layers, if "text" option set
@@ -126,16 +126,23 @@ def getFontSize(element):
 
 def listMatches(artboard,name):
     matches = [];
-    find(artboard, name, matches)
+    find(artboard, name, artboard.name, matches)
     return matches
 
-def find(artboard, name, result_list):
+def find(artboard, name, element_path, result_list):
 
     try:
         for layer in artboard:
+            element_path = element_path + ">" + layer.name
+            # search only layer name first(so regex elements like "^" and "$" work)
             match = re.search(name, layer.name)
             if match:
                 result_list.append(layer)
-            find(layer, name, result_list)
+            # search whole path next(joined by ">" character)
+            else:
+                match = re.search(name, element_path)
+                if match:
+                    result_list.append(layer)
+            find(layer, name, element_path, result_list)
     except TypeError:
         return
