@@ -19,21 +19,6 @@ import re
 # only store new element the second time). maybe: create a tree at the start of
 # getCSS, add to it/overwrite, and only convert the tree to CSS at the end
 
-# def getCSS(psd, config):
-#     css = ""
-#     for group in psd:
-#         css += ".b" + group.name + " {"
-#         if(group.kind == 'smartobject'):
-#             print("smartobject layer. opening...")
-#             group.smart_object.save('temp')
-#             group = PSDImage.open("temp")
-#         for [psd_name, selector] in config:
-#             css += getElementCSS(psd_name, selector, group)
-#         if os.path.exists("temp"):
-#             os.remove("temp") # Delete file
-#         css += "\n}\n\n"
-#     return css
-
 def getCSS(psd, config):
     css = ""
     for group in psd:
@@ -133,16 +118,16 @@ def find(artboard, name, element_path, result_list):
 
     try:
         for layer in artboard:
-            element_path = element_path + ">" + layer.name
+            current_element_path = element_path + ">" + layer.name
             # search only layer name first(so regex elements like "^" and "$" work)
             match = re.search(name, layer.name)
             if match:
                 result_list.append(layer)
             # search whole path next(joined by ">" character)
             else:
-                match = re.search(name, element_path)
+                match = re.search(name, current_element_path)
                 if match:
                     result_list.append(layer)
-            find(layer, name, element_path, result_list)
+            find(layer, name, current_element_path, result_list)
     except TypeError:
         return
