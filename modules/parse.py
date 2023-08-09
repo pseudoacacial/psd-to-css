@@ -9,7 +9,7 @@ import re
 # of merged
 #
 # find out why converting to jpg eats the quality a lot
-# 
+#
 # Nesting!!
 #
 # store a list of processed groups + selectors and don't write new css if it has
@@ -20,7 +20,7 @@ import re
 def getCSS(psd, config):
     css = ""
     for group in psd:
-        css += ".b" + group.name + " {"
+        groupCss = ""
         name = group.name
         if(group.kind == 'smartobject'):
             group.smart_object.save('temp')
@@ -36,14 +36,14 @@ def getCSS(psd, config):
             if (match):
                 # add to css
                 if (element.get('selector')):
-                    css += getElementCSS(match, group, element)
+                    groupCss += getElementCSS(match, group, element)
 
                 # export
                 if(element.get('export')):
                     filename = element['export'].get('name') if element['export'].get('name') else element['selector']
                     if (group.kind == 'smartobject'):
                         viewport = group.viewbox if element['export'].get('clip') else None
-                    else: 
+                    else:
                         viewport = group.bbox if element['export'].get('clip') else None
                     # discard transparency if jpg
                     if (element['export']['extension'] == "jpg"):
@@ -58,7 +58,8 @@ def getCSS(psd, config):
                         )
         if os.path.exists("temp"):
             os.remove("temp")
-        css += "\n}\n\n"
+        if (groupCss != ""):
+            css += ".b" + group.name + " {" + groupCss + "\n}\n\n"
     return css
 
 def findElement(psd_name, parent, match):
