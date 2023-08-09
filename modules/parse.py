@@ -8,8 +8,6 @@ import re
 # allow a list of psd names for one selector - merge and give position
 # of merged
 #
-# border-radius for button
-#
 # find out why converting to jpg eats the quality a lot
 # 
 # Nesting!!
@@ -82,10 +80,15 @@ def getElementCSS(element, frame, config):
         if selector:
             style += "\n" + selector + " {\n"
             if position:
+            # basic position
                 style += f'left: {element.offset[0] - frame.offset[0]}px;\n'\
                 + f'top: {element.offset[1] - frame.offset[1]}px;\n'\
                 + f'width: {element.width}px;\n'\
                 + f'height: {element.height}px;\n'
+            # border radius, if available
+            if(element.kind == 'shape' and element.origination[0].origin_type == 2):
+                radii = element.origination[0].radii
+                style += f'border-radius: {radii["topLeft"]}px {radii["topRight"]}px {radii["bottomLeft"]}px { radii["bottomRight"]}px;\n'
             # font-size, from this layer or from child layers, if "text" option set
             font_size =""
             if(text):
