@@ -54,6 +54,8 @@ def getCSS(psd, config):
                         image = match.composite(viewport, layer_filter= lambda x: True, color=(1.,1.,1.)).convert('RGB')
                     else:
                         image = match.composite(viewport, layer_filter= lambda x: True)
+                    if not os.path.exists('exported_images/'):
+                        os.mkdir('exported_images/')
                     image.save('exported_images/'\
                         + filename.replace('.', '')\
                         + '_' + name\
