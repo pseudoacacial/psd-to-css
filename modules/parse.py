@@ -72,6 +72,15 @@ def findElement(psd_name, parent, match):
     else:
         return False
 
+def findDescendantOfType(element, type):
+    if element.kind == type:
+        return element
+    if element.kind == 'group':
+        for child in element.descendants():
+            if child.kind == type:
+                return child
+    return False
+
 def getElementCSS(element, frame, config):
     selector = config.get('selector')
     text = config.get('text')
@@ -87,19 +96,21 @@ def getElementCSS(element, frame, config):
                 + f'width: {element.width}px;\n'\
                 + f'height: {element.height}px;\n'
             # border radius, if available
-            if(element.kind == 'shape' and element.origination[0].origin_type == 2):
-                radii = element.origination[0].radii
+            if(config.get('border')):
+                elementWithBorder = findDescendantOfType(element, 'shape')
+            else:
+                elementWithBorder = element
+            if(elementWithBorder.kind == 'shape' and elementWithBorder.origination[0].origin_type == 2):
+                radii = elementWithBorder.origination[0].radii
                 style += f'border-radius: {radii["topLeft"]}px {radii["topRight"]}px {radii["bottomLeft"]}px { radii["bottomRight"]}px;\n'
             # font-size, from this layer or from child layers, if "text" option set
             font_size =""
-            if(text):
-                if element.kind == 'type':
-                    style += f'font-size: {getFontSize(element)}px;\n'
-                else:
-                    for child in element.descendants():
-                        if child.kind == 'type':
-                            style += f'font-size: {getFontSize(child)}px;\n'
-                            break
+            if(config.get('text')):
+                elementWithText = findDescendantOfType(element, 'type')
+            else:
+                elementWithText = element
+            if elementWithText.kind == 'type':
+                style += f'font-size: {getFontSize(elementWithText)}px;\n'
             style += "}"
     return style
 
