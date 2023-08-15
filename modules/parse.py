@@ -10,8 +10,6 @@ import re
 #
 # find out why converting to jpg eats the quality a lot
 #
-# Nesting!!
-#
 # store a list of processed groups + selectors and don't write new css if it has
 # been written earlier (for example when there are two "300x600" groups, then
 # only store new element the second time). maybe: create a tree at the start of
@@ -32,11 +30,17 @@ def getCSS(psd, config):
                 element['position'] = True
             if(element.get('match') == None):
                 element['match'] = 0
+            if(element.get('frameMatch') == None):
+                element['frameMatch'] = 0
             match = findElement(element['name'], group, element['match'])
             if (match):
                 # add to css
+                if (element.get('frame')):
+                    frame = findElement(element['frame'], group, element['frameMatch'])
+                else:
+                    frame = group
                 if (element.get('selector')):
-                    groupCss += getElementCSS(match, group, element)
+                    groupCss += getElementCSS(match, frame, element)
 
                 # export
                 if(element.get('export')):
@@ -50,7 +54,7 @@ def getCSS(psd, config):
                         image = match.composite(viewport, layer_filter= lambda x: True, color=(1.,1.,1.)).convert('RGB')
                     else:
                         image = match.composite(viewport, layer_filter= lambda x: True)
-                    image.save('images/'\
+                    image.save('exported_images/'\
                         + filename.replace('.', '')\
                         + '_' + name\
                         + '.' + element['export']['extension'],\
@@ -83,35 +87,32 @@ def findDescendantOfType(element, type):
 
 def getElementCSS(element, frame, config):
     selector = config.get('selector')
-    text = config.get('text')
-    position = config.get('position')
     style = ""
-    if(position or text):
-        if selector:
-            style += "\n" + selector + " {\n"
-            if position:
-            # basic position
-                style += f'left: {element.offset[0] - frame.offset[0]}px;\n'\
-                + f'top: {element.offset[1] - frame.offset[1]}px;\n'\
-                + f'width: {element.width}px;\n'\
-                + f'height: {element.height}px;\n'
-            # border radius, if available
-            if(config.get('border')):
-                elementWithBorder = findDescendantOfType(element, 'shape')
-            else:
-                elementWithBorder = element
-            if(elementWithBorder.kind == 'shape' and elementWithBorder.origination[0].origin_type == 2):
-                radii = elementWithBorder.origination[0].radii
-                style += f'border-radius: {radii["topLeft"]}px {radii["topRight"]}px {radii["bottomLeft"]}px { radii["bottomRight"]}px;\n'
-            # font-size, from this layer or from child layers, if "text" option set
-            font_size =""
-            if(config.get('text')):
-                elementWithText = findDescendantOfType(element, 'type')
-            else:
-                elementWithText = element
-            if elementWithText.kind == 'type':
-                style += f'font-size: {getFontSize(elementWithText)}px;\n'
-            style += "}"
+    if selector:
+        style += "\n" + selector + " {\n"
+        if config.get('position'):
+        # basic position
+            style += f'left: {element.offset[0] - frame.offset[0]}px;\n'\
+            + f'top: {element.offset[1] - frame.offset[1]}px;\n'\
+            + f'width: {element.width}px;\n'\
+            + f'height: {element.height}px;\n'
+        # border radius, if available
+        if(config.get('border')):
+            elementWithBorder = findDescendantOfType(element, 'shape')
+        else:
+            elementWithBorder = element
+        if(elementWithBorder.kind == 'shape' and elementWithBorder.origination[0].origin_type == 2):
+            radii = elementWithBorder.origination[0].radii
+            style += f'border-radius: {radii["topLeft"]}px {radii["topRight"]}px {radii["bottomLeft"]}px { radii["bottomRight"]}px;\n'
+        # font-size, from this layer or from child layers, if "text" option set
+        font_size =""
+        if(config.get('text')):
+            elementWithText = findDescendantOfType(element, 'type')
+        else:
+            elementWithText = element
+        if elementWithText.kind == 'type':
+            style += f'font-size: {getFontSize(elementWithText)}px;\n'
+        style += "}"
     return style
 
 def getFontSize(element):
