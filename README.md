@@ -3,18 +3,21 @@ psd to css
 
 ### installation
 `git clone https://github.com/pseudoacacial/psd-to-css.git`
+
 `cd psd-to-css`
+
 `python -m venv ./`
 
-`source bin/activate` OR `source bin/activate.fish`
+`source bin/activate`(bash/zsh) OR `source bin/activate.fish`(fish) OR `Scripts\activate.bat`(windows cmd) OR `Scripts\Activate.ps1`(windows powershell)
 
 `pip install psd-tools`
+
 `pip install pyperclip`
 
 `python main.py`
 
 ### usage
-`source bin/activate` OR `source bin/activate.fish`
+`source bin/activate`(bash/zsh) OR `source bin/activate.fish`(fish) OR `Scripts\activate.bat`(windows cmd) OR `Scripts\Activate.ps1`(windows powershell)
 
 `python main.py`
 
@@ -41,3 +44,4 @@ Each config scheme entry can have possible values:
     - 'name' (string) - name of the exported file. It will be followed by the top artboard/smart object name. For example, name 'bg' results in files "bg_300x600.jpg", "bg_300x250.jpg", ...
     - 'clip' (boolean) - whether to clip to the frame (top artboard / smart object by default). Leave False for Key Visuals, turn True for backgrounds/overlays.
 - 'match' (number) - if 'name' matches more than one element, this allows to use a different one
+- 'position' (boolean) - whether to export the position. True by default. Change to False if, for example, you only want font-size for this element.

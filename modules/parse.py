@@ -15,7 +15,7 @@ import re
 # only store new element the second time). maybe: create a tree at the start of
 # getCSS, add to it/overwrite, and only convert the tree to CSS at the end
 
-def getCSS(psd, config):
+def getCSS(psd, config, prefix):
     css = ""
     for group in psd:
         groupCss = ""
@@ -65,7 +65,7 @@ def getCSS(psd, config):
         if os.path.exists("temp"):
             os.remove("temp")
         if (groupCss != ""):
-            css += ".b" + group.name + " {" + groupCss + "\n}\n\n"
+            css += prefix + group.name + " {" + groupCss + "\n}\n\n"
     return css
 
 def findElement(psd_name, parent, match):
