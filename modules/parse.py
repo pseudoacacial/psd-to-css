@@ -100,7 +100,7 @@ def getElementCSS(element, frame, config):
             + f'height: {element.height}px;\n'
         # border radius, if available
         if(config.get('border')):
-            elementWithBorder = findDescendantOfType(element, 'shape')
+            elementWithBorder = findDescendantOfType(element, 'shape') if findDescendantOfType(element, 'shape') else element
         else:
             elementWithBorder = element
         if(elementWithBorder.kind == 'shape' and elementWithBorder.origination[0].origin_type == 2):
@@ -109,7 +109,7 @@ def getElementCSS(element, frame, config):
         # font-size, from this layer or from child layers, if "text" option set
         font_size =""
         if(config.get('text')):
-            elementWithText = findDescendantOfType(element, 'type')
+            elementWithText = findDescendantOfType(element, 'type') if findDescendantOfType(element, 'type') else element
         else:
             elementWithText = element
         if elementWithText.kind == 'type':
