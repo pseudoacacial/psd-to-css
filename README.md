@@ -44,4 +44,5 @@ Each config scheme entry can have possible values:
     - 'name' (string) - name of the exported file. It will be followed by the top artboard/smart object name. For example, name 'bg' results in files "bg_300x600.jpg", "bg_300x250.jpg", ...
     - 'clip' (boolean) - whether to clip to the frame (top artboard / smart object by default). Leave False for Key Visuals, turn True for backgrounds/overlays.
 - 'match' (number) - if 'name' matches more than one element, this allows to use a different one
-- 'position' (boolean) - whether to export the position. True by default. Change to False if, for example, you only want font-size for this element.
+- 'position' (boolean) - whether to export the position (left and top). True by default. Change to False if, for example, you only want font-size for this element.
+- 'size' (boolean) - whether to export the size (width and height). True by default. Change to False if, for example, you only want font-size for this element.

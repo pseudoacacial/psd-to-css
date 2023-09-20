@@ -28,6 +28,8 @@ def getCSS(psd, config, prefix):
             #default values
             if(element.get('position') == None):
                 element['position'] = True
+            if(element.get('size') == None):
+                element['size'] = True
             if(element.get('match') == None):
                 element['match'] = 0
             if(element.get('frameMatch') == None):
@@ -95,8 +97,10 @@ def getElementCSS(element, frame, config):
         if config.get('position'):
         # basic position
             style += f'left: {element.offset[0] - frame.offset[0]}px;\n'\
-            + f'top: {element.offset[1] - frame.offset[1]}px;\n'\
-            + f'width: {element.width}px;\n'\
+            + f'top: {element.offset[1] - frame.offset[1]}px;\n'
+        if config.get('size'):
+        # size
+            style += f'width: {element.width}px;\n'\
             + f'height: {element.height}px;\n'
         # border radius, if available
         if(config.get('border')):
@@ -105,7 +109,7 @@ def getElementCSS(element, frame, config):
             elementWithBorder = element
         if(elementWithBorder.kind == 'shape' and elementWithBorder.origination[0].origin_type == 2):
             radii = elementWithBorder.origination[0].radii
-            style += f'border-radius: {radii["topLeft"]}px {radii["topRight"]}px {radii["bottomLeft"]}px { radii["bottomRight"]}px;\n'
+            style += f'border-radius: {round(float(radii["topLeft"]), 2)}px {round(float(radii["topRight"]), 2)}px {round(float(radii["bottomLeft"]), 2)}px {round(float(radii["bottomRight"]), 2)}px;\n'
         # font-size, from this layer or from child layers, if "text" option set
         font_size =""
         if(config.get('text')):
