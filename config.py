@@ -1,6 +1,7 @@
 settings = {
     'prefix': '.b',
     'psd_location': 'test/example.psd',
+    'group_match': '\d+x\d+',
 }
 scheme = [
     {'selector': '.logo', 'name': 'logo', },

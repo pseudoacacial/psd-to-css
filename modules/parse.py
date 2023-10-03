@@ -19,7 +19,12 @@ def getCSS(psd, config, settings):
     css = ""
     for group in psd:
         groupCss = ""
-        name = group.name
+        # ignore groups which names don't match the specified group_match
+        if(settings['group_match']):
+            matchedName = re.search(settings['group_match'], group.name)
+            if (not matchedName):
+                continue
+            name = matchedName[0]
         if(group.kind == 'smartobject'):
             group.smart_object.save('temp')
             group = PSDImage.open("temp")
@@ -67,7 +72,7 @@ def getCSS(psd, config, settings):
         if os.path.exists("temp"):
             os.remove("temp")
         if (groupCss != ""):
-            css += settings['prefix'] + group.name + " {" + groupCss + "\n}\n\n"
+            css += settings['prefix'] + name + " {" + groupCss + "\n}\n\n"
     return css
 
 def findElement(psd_name, parent, match):

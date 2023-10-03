@@ -36,6 +36,7 @@ General settings include:
 
 - 'psd_location' (mandatory)
 - 'prefix' (string) - a string to add before each group name in the SCSS.
+- 'group_match' (optional) - regular expression. If provided, the script will only work on arboards/smart objects whose name matches that regex. It will also change the SCSS group name to the regex match.
 
 Each scheme entry can have possible values:
 
