@@ -9,22 +9,22 @@ import re
 # of merged
 #
 # find out why converting to jpg eats the quality a lot
-#
-# store a list of processed groups + selectors and don't write new css if it has
-# been written earlier (for example when there are two "300x600" groups, then
-# only store new element the second time). maybe: create a tree at the start of
-# getCSS, add to it/overwrite, and only convert the tree to CSS at the end
 
 def getCSS(psd, config, settings):
-    css = ""
+    processedSelectors = {}
+    ### save styles in a dictionary
     for group in psd:
-        groupCss = ""
+        name=group.name
         # ignore groups which names don't match the specified group_match
         if(settings['group_match']):
             matchedName = re.search(settings['group_match'], group.name)
             if (not matchedName):
                 continue
             name = matchedName[0]
+        # add the group to list of processedSelectors, if it's the first time processing this group
+        if(processedSelectors.get(name) == None):
+            processedSelectors[name] = {} 
+        # handle smartobject
         if(group.kind == 'smartobject'):
             group.smart_object.save('temp')
             group = PSDImage.open("temp")
@@ -41,13 +41,16 @@ def getCSS(psd, config, settings):
                 element['frameMatch'] = 0
             match = findElement(element['name'], group, element['match'])
             if (match):
-                # add to css
-                if (element.get('frame')):
-                    frame = findElement(element['frame'], group, element['frameMatch'])
-                else:
-                    frame = group
+                # add to css, if the selector hasn't already been processed 
                 if (element.get('selector')):
-                    groupCss += getElementCSS(match, frame, element)
+                    if (processedSelectors[name].get('selector') == None):
+                        dictionary = {element["selector"]:None}
+                        processedSelectors[name][element["selector"]] = None
+                        if (element.get('frame')):
+                            frame = findElement(element['frame'], group, element['frameMatch'])
+                        else:
+                            frame = group
+                        processedSelectors[name][element["selector"]] = getElementCSS(match, frame, element)
 
                 # export
                 if(element.get('export')):
@@ -71,8 +74,14 @@ def getCSS(psd, config, settings):
                         )
         if os.path.exists("temp"):
             os.remove("temp")
-        if (groupCss != ""):
-            css += settings['prefix'] + name + " {" + groupCss + "\n}\n\n"
+
+    ### convert the dictionary to text
+    css = "" 
+    for group in processedSelectors:
+        css += settings['prefix'] + group + " {\n"
+        for element in processedSelectors[group]:
+            css += element + " {\n" + processedSelectors[group][element] + "}\n"
+        css += "}\n\n"
     return css
 
 def findElement(psd_name, parent, match):
@@ -98,7 +107,6 @@ def getElementCSS(element, frame, config):
     selector = config.get('selector')
     style = ""
     if selector:
-        style += "\n" + selector + " {\n"
         if config.get('position'):
         # basic position
             style += f'left: {element.offset[0] - frame.offset[0]}px;\n'\
@@ -123,7 +131,6 @@ def getElementCSS(element, frame, config):
             elementWithText = element
         if elementWithText.kind == 'type':
             style += f'font-size: {getFontSize(elementWithText)}px;\n'
-        style += "}"
     return style
 
 def getFontSize(element):
