@@ -29,8 +29,15 @@ psd to css
 it takes a config file (config.py). Inside it there's a path to the .psd file that we want parsed. There's also a 'scheme' - an array containing information about which layers from photoshop are of interest.
 The script produces an .scss stylesheet, which describes each layer of interest, inside each of the top artboards or smart objects.
 
-### config
-Each config scheme entry can have possible values:
+## config
+Config contains 2 python dictionaries: `settings` and `scheme`. `settings` includes general settings applying to the whole document. `scheme` contains information about different elements, that we want to extract from the PSD.
+
+General settings include:
+
+- 'psd_location' (mandatory)
+- 'prefix' (string) - a string to add before each group name in the SCSS.
+
+Each scheme entry can have possible values:
 
 - 'selector' (string or False) - under what css selector will the css be exported. E.g. ".logo"
 - 'name' (string, mandatory) - the name of the photoshop layer that we want exported. Uses regex. examples:

@@ -1,8 +1,15 @@
 from psd_tools import PSDImage
 import pyperclip as pc
-from config import scheme, prefix, psd_location
-psd = PSDImage.open(psd_location)
+
+from config import settings, scheme
 from modules.parse import getCSS
+
+#default values
+if(settings.get('prefix') == None):
+    settings['prefix'] = ""
+
+psd = PSDImage.open(settings['psd_location'])
+prefix = settings['prefix']
 
 result = getCSS(psd, scheme, prefix)
 print(result)

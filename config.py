@@ -1,4 +1,7 @@
-psd_location = 'test/example.psd'
+settings = {
+    'prefix': '.b',
+    'psd_location': 'test/example.psd',
+}
 scheme = [
     {'selector': '.logo', 'name': 'logo', },
     {'selector': '.text-1', 'name': 'text here'},
