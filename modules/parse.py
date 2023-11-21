@@ -28,6 +28,7 @@ def getCSS(psd, config, settings):
         if(group.kind == 'smartobject'):
             group.smart_object.save('temp')
             group = PSDImage.open("temp")
+            wasSmartObject = True
         # process element
         for element in config:
             #default values
@@ -55,7 +56,7 @@ def getCSS(psd, config, settings):
                 # export
                 if(element.get('export')):
                     filename = element['export'].get('name') if element['export'].get('name') else element['selector']
-                    if (group.kind == 'smartobject'):
+                    if (wasSmartObject):
                         viewport = group.viewbox if element['export'].get('clip') else None
                     else:
                         viewport = group.bbox if element['export'].get('clip') else None
