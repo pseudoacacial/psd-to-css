@@ -25,6 +25,7 @@ def getCSS(psd, config, settings):
         if(processedSelectors.get(name) == None):
             processedSelectors[name] = {} 
         # handle smartobject
+        wasSmartObject = False
         if(group.kind == 'smartobject'):
             group.smart_object.save('temp')
             group = PSDImage.open("temp")
@@ -64,7 +65,7 @@ def getCSS(psd, config, settings):
                     if (element['export']['extension'] == "jpg"):
                         image = match.composite(viewport, layer_filter= lambda x: True, color=(1.,1.,1.)).convert('RGB')
                     else:
-                        image = match.composite(viewport, layer_filter= lambda x: True)
+                        image = match.composite(viewport, layer_filter= lambda x: True, color=(1.,1.,1.)).convert('RGB')
                     if not os.path.exists('exported_images/'):
                         os.mkdir('exported_images/')
                     image.save('exported_images/'\
