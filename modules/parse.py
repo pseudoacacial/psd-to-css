@@ -65,7 +65,7 @@ def getCSS(psd, config, settings):
                     if (element['export']['extension'] == "jpg"):
                         image = match.composite(viewport, layer_filter= lambda x: True, color=(1.,1.,1.)).convert('RGB')
                     else:
-                        image = match.composite(viewport, layer_filter= lambda x: True, color=(1.,1.,1.)).convert('RGB')
+                        image = match.composite(viewport, layer_filter= lambda x: True)
                     if not os.path.exists('exported_images/'):
                         os.mkdir('exported_images/')
                     image.save('exported_images/'\
