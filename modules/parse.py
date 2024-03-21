@@ -80,7 +80,7 @@ def getCSS(psd, config, settings):
     ### convert the dictionary to text
     css = "" 
     for group in processedSelectors:
-        css += settings['prefix'] + group + " {\n"
+        css += settings['prefix'] + group + settings['suffix'] + " {\n"
         for element in processedSelectors[group]:
             css += element + " {\n" + processedSelectors[group][element] + "}\n"
         css += "}\n\n"
@@ -130,7 +130,7 @@ def getElementCSS(element, frame, config):
             elementWithText = findDescendantOfType(element, 'type') if findDescendantOfType(element, 'type') else element
         else:
             elementWithText = element
-        if elementWithText.kind == 'type':
+        if elementWithText.kind == 'type' and not config.get('text')==False:
             style += f'font-size: {getFontSize(elementWithText)}px;\n'
     return style
 
