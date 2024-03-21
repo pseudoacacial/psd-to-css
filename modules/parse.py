@@ -117,14 +117,13 @@ def getElementCSS(element, frame, config):
         # size
             style += f'width: {element.width}px;\n'\
             + f'height: {element.height}px;\n'
-        # border radius, if available
+        # border radius, if wanted 
         if(config.get('border')):
             elementWithBorder = findDescendantOfType(element, 'shape') if findDescendantOfType(element, 'shape') else element
-        else:
-            elementWithBorder = element
-        if(elementWithBorder.kind == 'shape' and elementWithBorder.origination[0].origin_type == 2):
-            radii = elementWithBorder.origination[0].radii
-            style += f'border-radius: {round(float(radii["topLeft"]), 2)}px {round(float(radii["topRight"]), 2)}px {round(float(radii["bottomLeft"]), 2)}px {round(float(radii["bottomRight"]), 2)}px;\n'
+
+            if(elementWithBorder.kind == 'shape' and elementWithBorder.origination[0].origin_type == 2):
+                radii = elementWithBorder.origination[0].radii
+                style += f'border-radius: {round(float(radii["topLeft"]), 2)}px {round(float(radii["topRight"]), 2)}px {round(float(radii["bottomLeft"]), 2)}px {round(float(radii["bottomRight"]), 2)}px;\n'
         # font-size, from this layer or from child layers, if "text" option set
         font_size =""
         if(config.get('text')):
