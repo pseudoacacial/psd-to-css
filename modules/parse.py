@@ -52,7 +52,8 @@ def getCSS(psd, config, settings):
                             frame = findElement(element['frame'], group, element['frameMatch'])
                         else:
                             frame = group
-                        processedSelectors[name][element["selector"]] = getElementCSS(match, frame, element)
+                        if(not type(frame) is bool):
+                            processedSelectors[name][element["selector"]] = getElementCSS(match, frame, element)
 
                 # export
                 if(element.get('export')):
@@ -117,6 +118,10 @@ def getElementCSS(element, frame, config):
         # size
             style += f'width: {element.width}px;\n'\
             + f'height: {element.height}px;\n'
+        # # rotation 
+        # if hasattr(element, 'warp'):
+        #     style += f'TRANSFORM HERE ~~~~~~~~~~~~~~~~~~~~~~~'
+        #     style += f'{element.warp}'\
         # border radius, if wanted 
         if(config.get('border')):
             elementWithBorder = findDescendantOfType(element, 'shape') if findDescendantOfType(element, 'shape') else element
