@@ -152,7 +152,7 @@ def getFontSize(element):
 def listMatches(artboard,name):
     matches = [];
     find(artboard, name, artboard.name, matches)
-    return matches
+    return list(filter(lambda n: n.width>0,matches))
 
 def find(artboard, name, element_path, result_list):
 
