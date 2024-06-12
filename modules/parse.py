@@ -83,7 +83,8 @@ def getCSS(psd, config, settings):
     for group in processedSelectors:
         css += settings['prefix'] + group + settings['suffix'] + " {\n"
         for element in processedSelectors[group]:
-            css += element + " {\n" + processedSelectors[group][element] + "}\n"
+            if(processedSelectors[group][element]):
+                css += element + " {\n" + processedSelectors[group][element] + "}\n"
         css += "}\n\n"
     return css
 
